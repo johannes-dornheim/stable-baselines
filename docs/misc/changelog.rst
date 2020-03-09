@@ -71,6 +71,7 @@ Bug Fixes:
   Only ``TRPO`` and ``PPO1`` update it differently (after synchronization) because they rely on MPI
 - Fixed bug in ``TRPO`` with NaN standardized advantages (@richardwu)
 - Fixed partial minibatch computation in ExpertDataset (@richardwu)
+- Fixed a bug in ``HindsightExperienceReplayWrapper``, where the openai-gym signature for ``compute_reward`` was not matched correctly
 
 Deprecations:
 ^^^^^^^^^^^^^
