@@ -6,8 +6,10 @@ Changelog
 For download links, please look at `Github release page <https://github.com/hill-a/stable-baselines/releases>`_.
 
 
-Pre-Release 2.10.0a0 (WIP)
---------------------------
+Release 2.10.0 (2020-03-11)
+---------------------------
+
+**Callback collection, cleanup and bug fixes**
 
 Breaking Changes:
 ^^^^^^^^^^^^^^^^^
@@ -72,6 +74,9 @@ Bug Fixes:
 - Fixed bug in ``TRPO`` with NaN standardized advantages (@richardwu)
 - Fixed partial minibatch computation in ExpertDataset (@richardwu)
 - Fixed a bug in ``HindsightExperienceReplayWrapper``, where the openai-gym signature for ``compute_reward`` was not matched correctly (@johannes-dornheim)
+- Fixed normalization (with ``VecNormalize``) for off-policy algorithms
+- Fixed ``sync_envs_normalization`` to sync the reward normalization too
+- Bump minimum Gym version (>=0.11)
 
 Deprecations:
 ^^^^^^^^^^^^^
