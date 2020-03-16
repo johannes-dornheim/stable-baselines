@@ -151,7 +151,7 @@ class DQN(OffPolicyRLModel):
 
     def learn(self, total_timesteps, callback=None, log_interval=100, tb_log_name="DQN",
               reset_num_timesteps=True, replay_wrapper=None):
-
+        print('JOHANNES DQN VERSION')
         new_tb_log = self._init_num_timesteps(reset_num_timesteps)
         callback = self._init_callback(callback)
 
@@ -210,7 +210,11 @@ class DQN(OffPolicyRLModel):
                     kwargs['update_param_noise_threshold'] = update_param_noise_threshold
                     kwargs['update_param_noise_scale'] = True
                 with self.sess.as_default():
-                    action = self.act(np.array(obs)[None], update_eps=update_eps, **kwargs)[0]
+                    action = self.act(np.array(obs)[None], update_eps=update_eps, **kwargs)
+                    if len(action) > 1:
+                        q_vals = action[1][0]
+                        print(f'q-vals: max {max(q_vals)}, min {min(q_vals)}')
+                    action = action[0][0]
                 env_action = action
                 reset = False
                 new_obs, rew, done, info = self.env.step(env_action)
