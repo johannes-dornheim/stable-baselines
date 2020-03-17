@@ -23,6 +23,7 @@ class HERGoalEnvWrapper(object):
         self.metadata = self.env.metadata
         self.action_space = env.action_space
         self.spaces = list(env.observation_space.spaces.values())
+        self.achieved_goals = {}
         # Check that all spaces are of the same type
         # (current limitation of the wrapper)
         space_types = [type(env.observation_space.spaces[key]) for key in KEY_ORDER]
@@ -44,16 +45,16 @@ class HERGoalEnvWrapper(object):
 
 
         if isinstance(self.spaces[0], spaces.MultiBinary):
-            total_dim = self.obs_dim + 2 * self.goal_dim
+            total_dim = self.obs_dim + self.goal_dim  # 2 * self.goal_dim
             self.observation_space = spaces.MultiBinary(total_dim)
 
         elif isinstance(self.spaces[0], spaces.Box):
-            lows = np.concatenate([space.low for space in self.spaces])
-            highs = np.concatenate([space.high for space in self.spaces])
+            lows = np.concatenate([space.low for space in np.array(self.spaces)[[0, 2]]]) # np.concatenate([space.low for space in self.spaces])
+            highs = np.concatenate([space.high for space in np.array(self.spaces)[[0, 2]]]) # np.concatenate([space.high for space in self.spaces])
             self.observation_space = spaces.Box(lows, highs, dtype=np.float32)
 
         elif isinstance(self.spaces[0], spaces.Discrete):
-            dimensions = [env.observation_space.spaces[key].n for key in KEY_ORDER]
+            dimensions = [env.observation_space.spaces[key].n for key in ['observation', 'desired_goal']]
             self.observation_space = spaces.MultiDiscrete(dimensions)
 
         else:
@@ -67,10 +68,21 @@ class HERGoalEnvWrapper(object):
         """
         # Note: achieved goal is not removed from the observation
         # this is helpful to have a revertible transformation
+        # --------------------------------------------------------------------------------------------
+        # instead: achieved goals are stored in extra dict hash(obs,desired):achieved !
+        # Assumes (obs,desired)->achieved to be unique !
+        # --------------------------------------------------------------------------------------------
+
         if isinstance(self.observation_space, spaces.MultiDiscrete):
             # Special case for multidiscrete
-            return np.concatenate([[int(obs_dict[key])] for key in KEY_ORDER])
-        return np.concatenate([obs_dict[key] for key in KEY_ORDER])
+            obs = np.concatenate([[int(obs_dict[key])] for key in ['observation', 'desired_goal']])
+        else:
+            obs = np.concatenate([obs_dict[key] for key in ['observation', 'desired_goal']])
+
+        # obs.flags.writeable = False
+        # self.achieved_goals[hash(obs.data)] = obs_dict['achieved_goal']
+        self.achieved_goals[hash(obs.data.tobytes())] = obs_dict['achieved_goal']
+        return obs
 
     def convert_obs_to_dict(self, observations):
         """
@@ -81,8 +93,8 @@ class HERGoalEnvWrapper(object):
         """
         return OrderedDict([
             ('observation', observations[:self.obs_dim]),
-            ('achieved_goal', observations[self.obs_dim:self.obs_dim + self.goal_dim]),
-            ('desired_goal', observations[self.obs_dim + self.goal_dim:]),
+            ('achieved_goal', self.achieved_goals[hash(observations.data.tobytes())]),
+            ('desired_goal', observations[self.obs_dim:]),
         ])
 
     def step(self, action):
