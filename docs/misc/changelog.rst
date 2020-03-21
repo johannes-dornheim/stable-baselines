@@ -6,6 +6,31 @@ Changelog
 For download links, please look at `Github release page <https://github.com/hill-a/stable-baselines/releases>`_.
 
 
+Pre-Release 2.10.1a0 (WIP)
+---------------------------
+
+Breaking Changes:
+^^^^^^^^^^^^^^^^^
+
+New Features:
+^^^^^^^^^^^^^
+
+Bug Fixes:
+^^^^^^^^^^
+- Fixed DDPG sampling empty replay buffer when combined with HER  (@tirafesi)
+- Fixed a bug in ``HindsightExperienceReplayWrapper``, where the openai-gym signature for ``compute_reward`` was not matched correctly (@johannes-dornheim)
+
+Deprecations:
+^^^^^^^^^^^^^
+
+Others:
+^^^^^^^
+
+Documentation:
+^^^^^^^^^^^^^^
+- Fix typos (@caburu)
+
+
 Release 2.10.0 (2020-03-11)
 ---------------------------
 
@@ -73,7 +98,6 @@ Bug Fixes:
   Only ``TRPO`` and ``PPO1`` update it differently (after synchronization) because they rely on MPI
 - Fixed bug in ``TRPO`` with NaN standardized advantages (@richardwu)
 - Fixed partial minibatch computation in ExpertDataset (@richardwu)
-- Fixed a bug in ``HindsightExperienceReplayWrapper``, where the openai-gym signature for ``compute_reward`` was not matched correctly (@johannes-dornheim)
 - Fixed normalization (with ``VecNormalize``) for off-policy algorithms
 - Fixed ``sync_envs_normalization`` to sync the reward normalization too
 - Bump minimum Gym version (>=0.11)
@@ -660,4 +684,4 @@ Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
 @Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket
 @MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow @Antymon @seheevic @justinkterry @edbeeching
-@flodorner @KuKuXia @NeoExtended @solliet @mmcenta @richardwu @johannes-dornheim
+@flodorner @KuKuXia @NeoExtended @solliet @mmcenta @richardwu @tirafesi @caburu @johannes-dornheim
