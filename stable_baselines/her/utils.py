@@ -77,7 +77,10 @@ class HERGoalEnvWrapper(object):
             # Special case for multidiscrete
             obs = np.concatenate([[int(obs_dict[key])] for key in ['observation', 'desired_goal']])
         else:
-            obs = np.concatenate([obs_dict[key] for key in ['observation', 'desired_goal']])
+            # obs = np.concatenate([obs_dict[key] for key in ['observation', 'desired_goal']])
+            # todo !!!!!!!!!! experimental relative goal
+            obs = np.concatenate([obs_dict['observation'], obs_dict['desired_goal'] - obs_dict['observation']])
+            # todo !!!!!!!!!! experimental relative goal
 
         # obs.flags.writeable = False
         # self.achieved_goals[hash(obs.data)] = obs_dict['achieved_goal']
@@ -105,7 +108,10 @@ class HERGoalEnvWrapper(object):
         return self.env.seed(seed)
 
     def reset(self):
-        return self.convert_dict_to_obs(self.env.reset())
+        # todo test
+        self.achieved_goals = {}
+        o = self.convert_dict_to_obs(self.env.reset())
+        return o
 
     def compute_reward(self, achieved_goal, desired_goal, info):
         return self.env.compute_reward(achieved_goal, desired_goal, info)

@@ -46,7 +46,8 @@ class HindsightExperienceReplayWrapper(object):
         that enables to convert observation to dict, and vice versa
     """
 
-    def __init__(self, replay_buffer, n_sampled_goal, goal_selection_strategy, wrapped_env):
+    def __init__(self, replay_buffer, n_sampled_goal, goal_selection_strategy, wrapped_env,
+                 relative_goal_representation=True):
         super(HindsightExperienceReplayWrapper, self).__init__()
 
         assert isinstance(goal_selection_strategy, GoalSelectionStrategy), "Invalid goal selection strategy," \
@@ -59,6 +60,7 @@ class HindsightExperienceReplayWrapper(object):
         # Buffer for storing transitions of the current episode
         self.episode_transitions = []
         self.replay_buffer = replay_buffer
+        self._relative_goal_representation = relative_goal_representation
 
     def add(self, obs_t, action, reward, obs_tp1, done):
         """
@@ -150,6 +152,11 @@ class HindsightExperienceReplayWrapper(object):
             obs_t, action, reward, obs_tp1, done = transition
 
             # Add to the replay buffer
+            """
+            print(f'obs: {obs_t}')
+            print(f'obs_tp1: {obs_tp1}')
+            print(f'a: {action}\tr: {reward}')
+            """
             self.replay_buffer.add(obs_t, action, reward, obs_tp1, done)
 
             # We cannot sample a goal from the future in the last step of an episode
@@ -181,4 +188,9 @@ class HindsightExperienceReplayWrapper(object):
                 obs, next_obs = map(self.env.convert_dict_to_obs, (obs_dict, next_obs_dict))
 
                 # Add artificial transition to the replay buffer
+                """
+                print(f'obs: {obs}')
+                print(f'obs_tp1: {next_obs}')
+                print(f'a: {action}\tr: {reward}')
+                """
                 self.replay_buffer.add(obs, action, reward, next_obs, done)
